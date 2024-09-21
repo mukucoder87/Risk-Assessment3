@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Risk Assessment Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        .slider-container, .select-container {
+            margin: 15px 0;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+        }
+        .value {
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result, .formula, .explanation {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .chart-container {
+            margin-top: 40px;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+        .acknowledgment {
+            margin-top: 40px;
+            font-size: 16px;
+            font-style: italic;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Enhanced Risk Assessment Tool</h1>
+
+    <!-- Select Hazard Type -->
+    <div class="select-container">
+        <label for="hazardType">Select Hazard Type:</label>
+        <select id="hazardType">
+            <option value="flood">Flood</option>
+            <option value="cyclone">Cyclone</option>
+            <option value="drought">Drought</option>
+            <option value="earthquake">Earthquake</option>
+            <option value="landslide">Landslide</option>
+            <option value="fire">Fire</option>
+            <option value="flash flood">Flash Flood</option>
+            <option value="cloud burst">Cloud Burst</option>
+            <option value="avalanche">Avalanche</option>
+        </select>
+    </div>
+
+    <!-- Select Season -->
+    <div class="select-container">
+        <label for="season">Select Season:</label>
+        <select id="season">
+            <option value="monsoon">Monsoon</option>
+            <option value="winter">Winter</option>
+            <option value="Pre Monsoon summer">Pre Monsoon Summer</option>
+        </select>
+    </div>
+
+    <!-- Type of Location -->
+    <div class="select-container">
+        <label for="locationType">Type of Location:</label>
+        <select id="locationType">
+            <option value="rural">Rural</option>
+            <option value="urban">Urban</option>
+        </select>
+    </div>
+
+    <!-- Settlement Type -->
+    <div class="select-container">
+        <label for="settlementType">Settlement:</label>
+        <select id="settlementType">
+            <option value="nearRiver">Near the River</option>
+            <option value="farAwayRiver">Far Away from the River</option>
+            <option value="hill">On the Hill</option>
+            <option value="valley">Valley</option>
+            <option value="riverIsland">River Island</option>
+            <option value="mountainousTerrain">Mountainous Terrain</option>
+            <option value="forestArea">Forest Area</option>
+            <option value="denseUrbanSettlement">Dense Urban Settlement</option>
+            <option value="subUrban">Sub-Urban Area</option>
+            <option value="desert">Desert</option>
+            <option value="island">Island</option>
+            <option value="delta">Delta</option>
+            <option value="plateau">Plateau</option>
+        </select>
+    </div>
+
+    <!-- Hazard, Vulnerability, Exposure Inputs -->
+    <div class="slider-container">
+        <label for="hazard">Hazard (H):</label>
+        <input type="range" id="hazard" name="hazard" min="0" max="10" value="5" step="0.1" oninput="updateValue('hazard', this.value)">
+        <span class="value" id="hazardValue">5.0</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="vulnerability">Vulnerability (V):</label>
+        <input type="range" id="vulnerability" name="vulnerability" min="0" max="10" value="5" step="0.1" oninput="updateValue('vulnerability', this.value)">
+        <span class="value" id="vulnerabilityValue">5.0</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="exposure">Exposure (E):</label>
+        <input type="range" id="exposure" name="exposure" min="0" max="10" value="5" step="0.1" oninput="updateValue('exposure', this.value)">
+        <span class="value" id="exposureValue">5.0</span>
+    </div>
+
+    <!-- Sliders for Weights: Hazard, Vulnerability, Exposure -->
+    <div class="slider-container">
+        <label for="hazardWeight">Hazard Weight:</label>
+        <input type="range" id="hazardWeight" name="hazardWeight" min="0" max="1" value="0.4" step="0.1" oninput="updateValue('hazardWeight', this.value)">
+        <span class="value" id="hazardWeightValue">0.4</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="vulnerabilityWeight">Vulnerability Weight:</label>
+        <input type="range" id="vulnerabilityWeight" name="vulnerabilityWeight" min="0" max="1" value="0.3" step="0.1" oninput="updateValue('vulnerabilityWeight', this.value)">
+        <span class="value" id="vulnerabilityWeightValue">0.3</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="exposureWeight">Exposure Weight:</label>
+        <input type="range" id="exposureWeight" name="exposureWeight" min="0" max="1" value="0.3" step="0.1" oninput="updateValue('exposureWeight', this.value)">
+        <span class="value" id="exposureWeightValue">0.3</span>
+    </div>
+
+    <!-- Sliders for Potential Damage and Loss -->
+    <div class="slider-container">
+        <label for="damage">Potential Damage:</label>
+        <input type="range" id="damage" name="damage" min="0" max="10" value="5" step="0.1" oninput="updateValue('damage', this.value)">
+        <span class="value" id="damageValue">5.0</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="loss">Potential Loss:</label>
+        <input type="range" id="loss" name="loss" min="0" max="10" value="5" step="0.1" oninput="updateValue('loss', this.value)">
+        <span class="value" id="lossValue">5.0</span>
+    </div>
+
+    <!-- Sliders for Weights: Damage and Loss -->
+    <div class="slider-container">
+        <label for="damageWeight">Damage Weight:</label>
+        <input type="range" id="damageWeight" name="damageWeight" min="0" max="1" value="0.5" step="0.1" oninput="updateValue('damageWeight', this.value)">
+        <span class="value" id="damageWeightValue">0.5</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="lossWeight">Loss Weight:</label>
+        <input type="range" id="lossWeight" name="lossWeight" min="0" max="1" value="0.5" step="0.1" oninput="updateValue('lossWeight', this.value)">
+        <span class="value" id="lossWeightValue">0.5</span>
+    </div>
+
+    <!-- Sliders for Capacity and Resilience, plus their weights -->
+    <div class="slider-container">
+        <label for="capacity">Capacity (C):</label>
+        <input type="range" id="capacity" name="capacity" min="0" max="10" value="5" step="0.1" oninput="updateValue('capacity', this.value)">
+        <span class="value" id="capacityValue">5.0</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="resilience">Resilience (R):</label>
+        <input type="range" id="resilience" name="resilience" min="0" max="10" value="5" step="0.1" oninput="updateValue('resilience', this.value)">
+        <span class="value" id="resilienceValue">5.0</span>
+    </div>
+
+    <!-- Sliders for Capacity and Resilience Weights -->
+    <div class="slider-container">
+        <label for="capacityWeight">Capacity Weight:</label>
+        <input type="range" id="capacityWeight" name="capacityWeight" min="0" max="1" value="0.5" step="0.1" oninput="updateValue('capacityWeight', this.value)">
+        <span class="value" id="capacityWeightValue">0.5</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="resilienceWeight">Resilience Weight:</label>
+        <input type="range" id="resilienceWeight" name="resilienceWeight" min="0" max="1" value="0.5" step="0.1" oninput="updateValue('resilienceWeight', this.value)">
+        <span class="value" id="resilienceWeightValue">0.5</span>
+    </div>
+
+    <button type="button" onclick="calculateRisk()">Calculate Likelihood & Impact</button>
+
+    <!-- Display the formula and result -->
+    <div class="formula">
+        <strong>Risk Formula:</strong> Risk = Likelihood × Impact <br>
+        <strong>Likelihood Formula:</strong> Likelihood = (Hazard × Weight) + (Vulnerability × Weight) + (Exposure × Weight) <br>
+        <strong>Impact Formula:</strong> Impact = (Damage × Damage Weight + Loss × Loss Weight) / (Capacity × Capacity Weight + Resilience × Resilience Weight) <br>
+    </div>
+    <div class="result" id="result">Risk Level: N/A</div>
+
+    <!-- Explanation of the factors affecting risk -->
+    <div class="explanation" id="explanation">Explanation: N/A</div>
+
+    <div class="chart-container">
+        <h3>Likelihood-Impact Matrix</h3>
+        <canvas id="riskChart"></canvas>
+    </div>
+
+    <!-- Acknowledgment Section -->
+    <div class="acknowledgment">
+        <p>Framework and Tool developed by <strong>Mukunda Upadhyay.</strong></p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Function to update the slider values dynamically
+    function updateValue(id, value) {
+        document.getElementById(id + 'Value').textContent = value;
+    }
+
+    // Function to calculate linear likelihood and impact, and compute risk
+    function calculateRisk() {
+        let hazard = parseFloat(document.getElementById('hazard').value);
+        let vulnerability = parseFloat(document.getElementById('vulnerability').value);
+        let exposure = parseFloat(document.getElementById('exposure').value);
+        let capacity = parseFloat(document.getElementById('capacity').value);
+        let resilience = parseFloat(document.getElementById('resilience').value);
+        let damage = parseFloat(document.getElementById('damage').value);
+        let loss = parseFloat(document.getElementById('loss').value);
+
+        // Get user-defined weights for hazard, vulnerability, exposure, damage, loss, capacity, and resilience
+        const hazardWeight = parseFloat(document.getElementById('hazardWeight').value);
+        const vulnerabilityWeight = parseFloat(document.getElementById('vulnerabilityWeight').value);
+        const exposureWeight = parseFloat(document.getElementById('exposureWeight').value);
+        const damageWeight = parseFloat(document.getElementById('damageWeight').value);
+        const lossWeight = parseFloat(document.getElementById('lossWeight').value);
+        const capacityWeight = parseFloat(document.getElementById('capacityWeight').value);
+        const resilienceWeight = parseFloat(document.getElementById('resilienceWeight').value);
+
+        // Likelihood calculation
+        const likelihood = (hazard * hazardWeight) + (vulnerability * vulnerabilityWeight) + (exposure * exposureWeight);
+
+        // Impact calculation based on the formula: (Damage × Damage Weight + Loss × Loss Weight) / (Capacity × Capacity Weight + Resilience × Resilience Weight)
+        const impact = (damage * damageWeight + loss * lossWeight) / (capacity * capacityWeight + resilience * resilienceWeight);
+
+        // Overall risk
+        const risk = likelihood * impact;
+
+        // Classification of likelihood
+        let likelihoodCategory = '';
+        if (likelihood < 2) {
+            likelihoodCategory = 'Unlikely';
+        } else if (likelihood < 5) {
+            likelihoodCategory = 'Moderately Likely';
+        } else if (likelihood < 8) {
+            likelihoodCategory = 'Severely Likely';
+        } else {
+            likelihoodCategory = 'Extremely Likely';
+        }
+
+        // Classification of impact
+        let impactCategory = '';
+        if (impact < 2) {
+            impactCategory = 'Low';
+        } else if (impact < 5) {
+            impactCategory = 'Moderate';
+        } else if (impact < 8) {
+            impactCategory = 'High';
+        } else {
+            impactCategory = 'Severe';
+        }
+
+        // Update the result
+        document.getElementById('result').innerHTML = `Risk Level: ${risk.toFixed(2)} (Likelihood: ${likelihood.toFixed(2)} - ${likelihoodCategory}, Impact: ${impact.toFixed(2)} - ${impactCategory})`;
+
+        // Update explanation with advanced language
+        let explanation = `<strong>Explanation:</strong> The current risk is assessed for the selected hazard during the selected season. `;
+        explanation += `Given the seasonality, the likelihood of occurrence is influenced by the hazard type and exposure factors. `;
+        explanation += `The calculated likelihood falls under the category "${likelihoodCategory}". `;
+        explanation += `The impact is classified as "${impactCategory}". `;
+        explanation += `The overall risk score integrates multiple factors, including damage, loss, capacity, and resilience.`;
+
+     
+
+        document.getElementById('explanation').innerHTML = explanation;
+
+        // Update the chart
+        updateChart(likelihood, impact);
+    }
+
+    const ctx = document.getElementById('riskChart').getContext('2d');
+    let riskChart;
+
+    function initializeChart() {
+        riskChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Likelihood vs. Impact',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    pointRadius: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Likelihood'
+                        },
+                        min: 0,
+                        max: 10,
+                        ticks: {
+                            callback: function(value) {
+                                const likelihoodLabels = ['Unlikely', 'Moderately Likely', 'Severely Likely', 'Extremely Likely'];
+                                return likelihoodLabels[Math.floor(value / 3)];
+                            }
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Impact'
+                        },
+                        min: 0,
+                        max: 10,
+                        ticks: {
+                            callback: function(value) {
+                                const impactLabels = ['Low', 'Moderate', 'High', 'Severe'];
+                                return impactLabels[Math.floor(value / 3)];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateChart(likelihood, impact) {
+        const newData = { x: likelihood, y: impact };
+
+        // Set color according to risk level
+        let color = 'rgba(0, 255, 0, 0.5)'; // Default green
+        if (likelihood * impact > 64) {
+            color = 'rgba(255, 0, 0, 0.5)'; // Red for ultimate danger
+        } else if (likelihood * impact > 36) {
+            color = 'rgba(255, 255, 0, 0.5)'; // Yellow for high alert
+        }
+
+        riskChart.data.datasets[0].data = [newData];
+        riskChart.data.datasets[0].backgroundColor = color;
+        riskChart.update();
+    }
+
+    window.onload = initializeChart;
+</script>
+
+</body>
+</html>
