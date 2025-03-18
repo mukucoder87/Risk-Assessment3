@@ -69,9 +69,9 @@
 <body>
 
 <div class="container">
-    <h1>Enhanced Risk Assessment Tool</h1>
+    <h1>A Sample Tool for Risk Assesment: Only for Training Purpose</h1>
 
-    <!-- Select Hazard Type -->
+    <!-- Select the Hazard Type you want to understand -->
     <div class="select-container">
         <label for="hazardType">Select Hazard Type:</label>
         <select id="hazardType">
@@ -83,11 +83,11 @@
             <option value="fire">Fire</option>
             <option value="flash flood">Flash Flood</option>
             <option value="cloud burst">Cloud Burst</option>
-            <option value="avalanche">Avalanche</option>
+            <option value="erosion">Erosion</option>
         </select>
     </div>
 
-    <!-- Select Season -->
+    <!-- Select Season when this hazard is most likely to occur -->
     <div class="select-container">
         <label for="season">Select Season:</label>
         <select id="season">
@@ -97,7 +97,7 @@
         </select>
     </div>
 
-    <!-- Type of Location -->
+    <!-- Is it in Rural or Urban Area? -->
     <div class="select-container">
         <label for="locationType">Type of Location:</label>
         <select id="locationType">
@@ -106,7 +106,7 @@
         </select>
     </div>
 
-    <!-- Settlement Type -->
+    <!-- Locate the Settlement Area -->
     <div class="select-container">
         <label for="settlementType">Settlement:</label>
         <select id="settlementType">
@@ -242,12 +242,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Function to update the slider values dynamically
+    // This section will update the slider values(function)
     function updateValue(id, value) {
         document.getElementById(id + 'Value').textContent = value;
     }
 
-    // Function to calculate linear likelihood and impact, and compute risk
+    // This will estimated the likelihood and impact( This is a function). After this it will estimate the risk. It is a function 
     function calculateRisk() {
         let hazard = parseFloat(document.getElementById('hazard').value);
         let vulnerability = parseFloat(document.getElementById('vulnerability').value);
@@ -257,7 +257,7 @@
         let damage = parseFloat(document.getElementById('damage').value);
         let loss = parseFloat(document.getElementById('loss').value);
 
-        // Get user-defined weights for hazard, vulnerability, exposure, damage, loss, capacity, and resilience
+        // The user will define weights for hazard, vulnerability, exposure, damage, loss, capacity, and resilience. This weights are basically based on perception. If a expert can estimate the weights based on some advanced statistics, they may use. However, since this is for training, general perception may also work. 
         const hazardWeight = parseFloat(document.getElementById('hazardWeight').value);
         const vulnerabilityWeight = parseFloat(document.getElementById('vulnerabilityWeight').value);
         const exposureWeight = parseFloat(document.getElementById('exposureWeight').value);
@@ -266,16 +266,16 @@
         const capacityWeight = parseFloat(document.getElementById('capacityWeight').value);
         const resilienceWeight = parseFloat(document.getElementById('resilienceWeight').value);
 
-        // Likelihood calculation
+        // This section will estimate the likelihood. Its a formula deisgned by me(Mukund) and is useful for explaining stakeholders on the idea of risk. 
         const likelihood = (hazard * hazardWeight) + (vulnerability * vulnerabilityWeight) + (exposure * exposureWeight);
 
-        // Impact calculation based on the formula: (Damage × Damage Weight + Loss × Loss Weight) / (Capacity × Capacity Weight + Resilience × Resilience Weight)
+        // Finally we estimate the impact using this formuala-(Damage × Damage Weight + Loss × Loss Weight) / (Capacity × Capacity Weight + Resilience × Resilience Weight)
         const impact = (damage * damageWeight + loss * lossWeight) / (capacity * capacityWeight + resilience * resilienceWeight);
 
-        // Overall risk
+        // Hence risk which is also the ratio of hazard, vulnerability, exposure combined to that of syystem capacity can also be understood as a product of likelihood and impact. 
         const risk = likelihood * impact;
 
-        // Classification of likelihood
+        // This section gives a brief idea on the likelihood part
         let likelihoodCategory = '';
         if (likelihood < 2) {
             likelihoodCategory = 'Unlikely';
@@ -287,7 +287,7 @@
             likelihoodCategory = 'Extremely Likely';
         }
 
-        // Classification of impact
+        // This section is for impact
         let impactCategory = '';
         if (impact < 2) {
             impactCategory = 'Low';
@@ -299,10 +299,10 @@
             impactCategory = 'Severe';
         }
 
-        // Update the result
+        // This is the result 
         document.getElementById('result').innerHTML = `Risk Level: ${risk.toFixed(2)} (Likelihood: ${likelihood.toFixed(2)} - ${likelihoodCategory}, Impact: ${impact.toFixed(2)} - ${impactCategory})`;
 
-        // Update explanation with advanced language
+        // Description. Some preembedded text to explain their results better. 
         let explanation = `<strong>Explanation:</strong> The current risk is assessed for the selected hazard during the selected season. `;
         explanation += `Given the seasonality, the likelihood of occurrence is influenced by the hazard type and exposure factors. `;
         explanation += `The calculated likelihood falls under the category "${likelihoodCategory}". `;
@@ -313,7 +313,7 @@
 
         document.getElementById('explanation').innerHTML = explanation;
 
-        // Update the chart
+        // Finally the chart
         updateChart(likelihood, impact);
     }
 
